@@ -9,14 +9,20 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+/**
+ * 设置网格布局更新数据
+ */
 
 public class MybaseAdapter extends BaseAdapter {
     private Context context;
     private ArrayList<item> list=new ArrayList<item>();
     private LayoutInflater layoutInflater;
+    //宽度
+    private int auto_width;
 
-    public MybaseAdapter(Context context, ArrayList<item> item) {
+    public MybaseAdapter(Context context, ArrayList<item> item,int auto) {
         this.list = item;
+        auto_width=auto;
         layoutInflater = LayoutInflater.from(context);
     }
 
@@ -49,14 +55,13 @@ public class MybaseAdapter extends BaseAdapter {
         }
         item provinceBean = list.get(position);
         if (provinceBean != null) {
-            if(provinceBean.getValue()==0){
+            if(provinceBean.getValue()==0 ){
                 holder.text.setText(" ");
             }else{
-                holder.text.setText(provinceBean.getValue()+" ");
+                holder.text.setText(Integer.toString(provinceBean.getValue()));
             }
-            holder.text.setBackgroundColor(255*255*255+215*215);
-            holder.text.setHeight(100);
-            holder.text.setWidth(100);
+            holder.text.setHeight(auto_width/4-30);
+            holder.text.setWidth(auto_width/4-30);
         }
         return convertView;
     }

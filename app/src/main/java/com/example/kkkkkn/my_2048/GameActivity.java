@@ -36,6 +36,7 @@ public class GameActivity extends AppCompatActivity {
     private Random run=new Random();
     private int point;
     private int width,height;
+    private int auto;
     private Chronometer time;
     private String direction;
     private int[][] array=new int[4][4];        //网格矩阵
@@ -52,7 +53,6 @@ public class GameActivity extends AppCompatActivity {
 
         //开始计时
         time.setBase(SystemClock.elapsedRealtime());//计时器清零
-        time.start();
         //获取屏幕宽度、高度
         WindowManager windowManager=getWindowManager();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -60,17 +60,29 @@ public class GameActivity extends AppCompatActivity {
         width = outMetrics.widthPixels;
         height = outMetrics.heightPixels;
         Log.i(TAG, "屏幕宽度是："+width+"屏幕高度是："+height);
-
+        //判断自适应布局长度
+        if(width>height){
+            auto=height;
+        }else{
+            auto=width;
+        }
         //初始化游戏界面，绘制游戏界面
         InitGame();
         //生成2个 2，位置随机
     }
 
     @Override
-    protected void onStop() {
+    protected void onResume() {
+        //开始计时
+        time.start();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
         //停止计时
         time.stop();
-        super.onStop();
+        super.onPause();
     }
 
     @Override
@@ -88,7 +100,7 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-        mbaseadapter=new MybaseAdapter(mcontext,list);
+        mbaseadapter=new MybaseAdapter(mcontext,list,auto);
 
         game_view.setAdapter(mbaseadapter);
         game_view.setFocusable(false);
@@ -99,6 +111,7 @@ public class GameActivity extends AppCompatActivity {
                 Toast.makeText(mcontext,"您点击的是"+position,Toast.LENGTH_SHORT).show();
             }
         });*/
+
        //手势触摸监听
        game_view.setOnTouchListener(new View.OnTouchListener() {
            @Override
@@ -154,7 +167,7 @@ public class GameActivity extends AppCompatActivity {
                            }
                        }
 
-                       mbaseadapter=new MybaseAdapter(mcontext,list);
+                       mbaseadapter=new MybaseAdapter(mcontext,list,auto);
                        game_view.setAdapter(mbaseadapter);
 
                        break;
@@ -181,7 +194,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     /**
-     *产生随机数并添加到网格       先进性手势操作之后再去添加随机数
+     *产生随机数并添加到网格       先进行手势操作之后再去添加随机数
      */
     public int[][] changearray(int[][] array){
 
