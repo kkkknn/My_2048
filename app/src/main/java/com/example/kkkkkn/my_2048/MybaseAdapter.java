@@ -55,6 +55,7 @@ public class MybaseAdapter extends BaseAdapter {
         }
         item provinceBean = list.get(position);
         if (provinceBean != null) {
+            //设置每个子元素的数值，根据之前的处理计算
             if(provinceBean.getValue()==0 ){
                 holder.text.setText(" ");
             }else{

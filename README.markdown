@@ -1,6 +1,9 @@
 # 2048小游戏
 <font color="red" size="10" face="楷体">基于Android的小游戏 </font><br/>
 
+## 目前界面
+
+<img src="img_sourse/index.png" width="400"/>
 
 ## 项目日志
 
