@@ -3,7 +3,7 @@
 
 ## 目前界面
 
-<img src="img_sourse/index.png" width="400"/>
+<img src="img_sourse/index.png" width="100"/>
 
 ## 项目日志
 
