@@ -33,6 +33,7 @@ public class GameActivity extends AppCompatActivity {
     private ArrayList<item> list=null;
     private BaseAdapter mbaseadapter=null;
     private int start_x,start_y,end_x,end_y;
+    private long runtime;
     private Random run=new Random();
     private int point;
     private int width,height;
@@ -73,6 +74,11 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        //设置时间
+        if(runtime!=0){
+            time.setBase(runtime);
+            Log.i(TAG, "onResume: "+runtime);
+        }
         //开始计时
         time.start();
         super.onResume();
@@ -80,6 +86,9 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        //记录运行时间
+        runtime=time.getBase();
+        Log.i(TAG, "onPause: "+runtime);
         //停止计时
         time.stop();
         super.onPause();
