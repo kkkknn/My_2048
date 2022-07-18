@@ -1,35 +1,22 @@
 package com.example.kkkkkn.my_2048;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Adapter;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Chronometer;
-import android.widget.GridView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import static android.view.MotionEvent.ACTION_DOWN;
-import static android.view.MotionEvent.ACTION_POINTER_UP;
-import static android.view.MotionEvent.ACTION_UP;
-
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends Activity {
     private Context mcontext;
     private final String TAG="2048小游戏";
-    private GridView game_view;
+    private GameView game_view;
     private ArrayList<item> list=null;
     private BaseAdapter mbaseadapter=null;
     private int start_x,start_y,end_x,end_y;
@@ -39,8 +26,6 @@ public class GameActivity extends AppCompatActivity {
     private int width,height;
     private int auto;
     private Chronometer time;
-    private String direction;
-    private int[][] array=new int[4][4];        //网格矩阵
     private ArrayList<String> blank=new ArrayList<>();
     private ArrayList<String> data=new ArrayList<>();
     @Override
@@ -67,9 +52,8 @@ public class GameActivity extends AppCompatActivity {
         }else{
             auto=width;
         }
-        //初始化游戏界面，绘制游戏界面
-        InitGame();
-        //生成2个 2，位置随机
+        int size=(auto/4)-16;
+        game_view.initView(4,size);
     }
 
     @Override
@@ -100,91 +84,6 @@ public class GameActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void InitGame(){
-        list=new ArrayList<>();
-        array=Initarray(array);
-        for(int i=0;i<array.length;i++){
-            for (int j=0;j<array[i].length;j++){
-                list.add(new item(array[i][j]));
-            }
-        }
-
-        mbaseadapter=new MybaseAdapter(mcontext,list,auto);
-
-        game_view.setAdapter(mbaseadapter);
-        game_view.setFocusable(false);
-
-       /* game_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(mcontext,"您点击的是"+position,Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
-       //手势触摸监听
-       game_view.setOnTouchListener(new View.OnTouchListener() {
-           @Override
-           public boolean onTouch(View v, MotionEvent event) {
-               //手势操作的判断
-               //Log.i(TAG, "获取到触摸事件了: "+event.getAction());
-               switch(event.getAction()){
-                   case ACTION_DOWN:
-                       start_x=(int)event.getX();
-                       start_y=(int)event.getY();
-                       break;
-                   case ACTION_UP:
-                       end_x=(int)event.getX();
-                       end_y=(int)event.getY();
-                       int ax=end_x-start_x;
-                       int ay=end_y-start_y;
-                       if(Math.abs(ax)>Math.abs(ay)){
-                           //左右手势
-                           if(ax>0){
-                               //右手势
-                               direction="right";
-                               Log.i(TAG, "onTouch: 右手势");
-                           }else if(ax<0){
-                               //左手势
-                               Log.i(TAG, "onTouch: 左手势");
-                               direction="left";
-                           }
-                       }else if(Math.abs(ax)<Math.abs(ay)){
-                           //上下手势
-                           if(ay>0){
-                               //下手势
-                               Log.i(TAG, "onTouch: 下手势");
-                               direction="down";
-                           }else if(ay<0){
-                               //上手势
-                               Log.i(TAG, "onTouch: 上手势");
-                               direction="up";
-                           }
-                       }
-                       //调用手势方法
-                       sign(array,direction);
-                       //调用随机生成方法
-                       array=changearray(array);
-                       if(array==null){
-                           Log.i(TAG,"游戏结束");
-                           break;
-                       }
-
-                       list.clear();
-                       for(int i=0;i<array.length;i++){
-                           for (int j=0;j<array[i].length;j++){
-                               list.add(new item(array[i][j]));
-                           }
-                       }
-
-                       mbaseadapter=new MybaseAdapter(mcontext,list,auto);
-                       game_view.setAdapter(mbaseadapter);
-
-                       break;
-               }
-               return false;
-           }
-       });
-    }
     /**
      * 初始化网格数字
     * */
