@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class Card extends FrameLayout {
     //展示的数字
     private TextView showTextView;
-    private int showNum;
+    private int showNum=0;
 
     public Card(@NonNull Context context,int leftMargin,int topMargin,int rightMargin,int bottomMargin) {
         super(context);

@@ -1,7 +1,6 @@
 package com.example.kkkkkn.my_2048;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -10,6 +9,7 @@ import android.view.View;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_UP;
@@ -90,19 +90,68 @@ public class GameView extends GridLayout {
     private void slideLeft(){
         Log.i(TAG, "slideLeft: 左滑");
         //思路， 从每行最右边开始遍历，取到值，然后遍历左边，直到找到数字或到头，
-
+        for (int i = 0; i < columnCount; i++) {
+            slide_process(Arrays.copyOf(cards[i],columnCount));
+        }
         //修改完所有之后，调用展示动画
 
     }
     private void slideRight(){
         Log.i(TAG, "slideRight: 右滑");
+        Card[] arr=new Card[columnCount];
+        for (int i = 0; i <columnCount ; i++) {
+            for (int j = columnCount-1; j >=0; j--) {
+                arr[i]=cards[i][j];
+            }
+            slide_process(arr);
+
+        }
+
     }
     private void slideUp(){
         Log.i(TAG, "slideUp: 上划");
+        Card[] arr=new Card[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            for (int j = 0; j <columnCount; j++) {
+                arr[i]=cards[j][i];
+            }
+            slide_process(arr);
+        }
+
     }
     private void slideDown(){
         Log.i(TAG, "slideDown: 下滑");
+        Card[] arr=new Card[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            for (int j = columnCount-1; j >=0; j--) {
+                arr[i]=cards[j][i];
+            }
+            slide_process(arr);
+        }
     }
+
+    private void slide_process(Card[] arr){
+        int index=0;
+        int num=0;
+        for (Card card : arr) {
+            if (card.getShowNum() == 0) {
+            } else if (num == 0) {
+                num = card.getShowNum();
+                card.setShowNum(0);
+            } else if (num == card.getShowNum()) {
+                arr[index].setShowNum(card.getShowNum() * 2);
+                card.setShowNum(0);
+                index++;
+                num = 0;
+            }
+        }
+        if(num!=0){
+            arr[index].setShowNum(num);
+        }
+    }
+
+
+
 
     //随机位置添加卡片
     private void initCards(int cardWidth,int cardHeight){
