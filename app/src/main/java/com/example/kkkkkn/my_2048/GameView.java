@@ -92,7 +92,7 @@ public class GameView extends GridLayout {
         //思路， 从每行最右边开始遍历，取到值，然后遍历左边，直到找到数字或到头，
 
         //修改完所有之后，调用展示动画
-        
+
     }
     private void slideRight(){
         Log.i(TAG, "slideRight: 右滑");
