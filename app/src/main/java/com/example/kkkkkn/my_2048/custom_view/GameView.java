@@ -72,10 +72,7 @@ public class GameView extends GridLayout {
                         }
                         //已滑动状态，进行添加数字
                         if(isSlide){
-                            boolean flag=addRandomCardNum();
-                            if(!flag&&listener!=null){
-                                listener.gameOver(false);
-                            }
+                            addRandomCardNum();
                         }
 
                         break;
@@ -176,6 +173,7 @@ public class GameView extends GridLayout {
         boolean isSlide =false;
         int lastNum=-1;
         int lastIndex=-1;
+        boolean isChange=false;
         for (int i = 0; i < len; i++) {
             Card card=cards[arrI[i]][arrJ[i]];
             int num=card.getShowNum();
@@ -186,7 +184,6 @@ public class GameView extends GridLayout {
                     }
                     lastNum=num;
                     lastIndex=i;
-                    card.setShowNum(0);
                 }else {
                     cards[arrI[lastIndex]][arrJ[lastIndex]].setShowNum(lastNum*2);
                     if(listener!=null){
@@ -197,11 +194,13 @@ public class GameView extends GridLayout {
                     }
                     lastIndex=-1;
                     lastNum=-1;
-                    card.setShowNum(0);
                 }
+                card.setShowNum(0);
+                isChange=true;
             }
             if (i==(len-1)&&lastNum!=-1){
                 cards[arrI[lastIndex]][arrJ[lastIndex]].setShowNum(lastNum);
+                isChange=true;
             }
         }
 
@@ -221,6 +220,7 @@ public class GameView extends GridLayout {
                             cards[arrI[index]][arrJ[index]].setShowNum(num);
                             card.setShowNum(0);
                             isSlide =true;
+                            isChange=true;
                         }
                         break;
                     }
@@ -228,9 +228,13 @@ public class GameView extends GridLayout {
                         cards[arrI[j]][arrJ[j]].setShowNum(num);
                         card.setShowNum(0);
                         isSlide =true;
+                        isChange=true;
                     }
                 }
             }
+        }
+        if(!isChange&&listener!=null){
+            listener.gameOver(false);
         }
         return isSlide;
     }
@@ -272,7 +276,7 @@ public class GameView extends GridLayout {
         }
     }
 
-    private boolean addRandomCardNum(){
+    private void addRandomCardNum(){
         getEmptyCard();
         if(!emptyList.isEmpty()){
             Point point=emptyList.get((int) (Math.random()*emptyList.size()));
@@ -280,9 +284,8 @@ public class GameView extends GridLayout {
 
             //todo 设置动画
             setAppearAnim(cards[point.x][point.y]);
-            return true;
         }
-        return false;
+
     }
 
     //设置动画
