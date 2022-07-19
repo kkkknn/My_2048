@@ -3,4 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="viewBackground">#BBADA0</color>
+    <color name="CardBackground">#CDC1B4</color>
+    <color name="APPBackground">#FAF8EF</color>
+    <color name="BtnBackground">#8F7A66</color>
+    <color name="TextColorBlack">#776E65</color>
+    <color name="TextColorWrite">#EEE4DA</color>
 </resources>

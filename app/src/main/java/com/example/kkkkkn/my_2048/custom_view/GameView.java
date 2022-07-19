@@ -1,4 +1,4 @@
-package com.example.kkkkkn.my_2048;
+package com.example.kkkkkn.my_2048.custom_view;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -87,7 +87,7 @@ public class GameView extends GridLayout {
         });
         addRandomCardNum();
     }
-    
+
     public void setListener(Listener listener){
         this.listener=listener;
     }
@@ -245,14 +245,14 @@ public class GameView extends GridLayout {
         for (int i = 0; i < columnCount; i++) {
             for (int j = 0; j < columnCount; j++) {
                 if((i==columnCount-1)&&(j==columnCount-1)){
-                    card = new Card(getContext(), 16, 16, 16,16);
+                    card = new Card(getContext(), 25, 25, 25,25);
                 }else if (i == columnCount - 1) {
                     // 为最底下的格子加上bottomMargin
-                    card = new Card(getContext(), 16, 16, 0,16);
+                    card = new Card(getContext(), 25, 25, 0,25);
                 } else if(j==columnCount-1){
-                    card = new Card(getContext(), 16, 16, 16,0);
+                    card = new Card(getContext(), 25, 25, 25,0);
                 }else {
-                    card = new Card(getContext(), 16, 16, 0,0);
+                    card = new Card(getContext(), 25, 25, 0,0);
                 }
                 card.setShowNum(0);
                 addView(card,cardWidth,cardHeight);

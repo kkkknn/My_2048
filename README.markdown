@@ -1,9 +1,10 @@
 # 2048小游戏
+
 基于Android的小游戏
 
 ## 目前界面
 
-<img src="img_sourse/index.png" width="400"/>
+<img src="img_sourse/ui.jpg" width="800"/>
 
 ## 项目日志
 
@@ -19,4 +20,5 @@
 
 2019-4-17:  美化+小特效:
 
+2022-7-19: UI更新，BUG修复
 

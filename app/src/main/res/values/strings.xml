@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">My_2048</string>
+    <string name="rule">如何玩： <b>滑动屏幕</b>移动方块 当两个具有相同数字的方块接触时，它们<b>会合并为一个</b>！ 当数字达到2048时胜利！</string>
 </resources>

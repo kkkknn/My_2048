@@ -1,16 +1,20 @@
-package com.example.kkkkkn.my_2048;
+package com.example.kkkkkn.my_2048.custom_view;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.example.kkkkkn.my_2048.R;
+
 public class Card extends FrameLayout {
     //展示的数字
     private TextView showTextView;
     private int showNum=0;
+    GradientDrawable drawable;
 
     public Card(@NonNull Context context,int leftMargin,int topMargin,int rightMargin,int bottomMargin) {
         super(context);
@@ -19,11 +23,15 @@ public class Card extends FrameLayout {
 
     private void init(Context context,int leftMargin,int topMargin,int rightMargin,int bottomMargin) {
         showTextView=new TextView(context);
-        showTextView.setTextSize(26);
+        showTextView.setTextSize(30);
         showTextView.setGravity(Gravity.CENTER);
         showTextView.getPaint().setAntiAlias(true);
         showTextView.getPaint().setFakeBoldText(true);
-        showTextView.setTextColor(Color.WHITE);
+        showTextView.setTextColor(getResources().getColor(R.color.TextColorBlack));
+        drawable=new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+        drawable.setCornerRadius(20);
         LayoutParams params=new LayoutParams(-1,-1);
         params.setMargins(leftMargin, topMargin, rightMargin, bottomMargin);
         addView(showTextView,params);
@@ -40,7 +48,8 @@ public class Card extends FrameLayout {
 
     public void setShowNum(int i) {
         this.showNum=i;
-        showTextView.setBackgroundColor(getColor(i));
+        drawable.setColor(getColor(i));
+        showTextView.setBackground(drawable);
         if(i<=0){
             showTextView.setText(" ");
         }else {
@@ -86,7 +95,7 @@ public class Card extends FrameLayout {
                 color=Color.parseColor("#EA7821");
                 break;
             default:
-                color=Color.parseColor("#f5f0ed");
+                color=Color.parseColor("#CDC1B4");
                 break;
         }
         return color;

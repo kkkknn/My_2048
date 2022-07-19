@@ -7,24 +7,25 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.BaseAdapter;
 import android.widget.Chronometer;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Random;
+import com.example.kkkkkn.my_2048.custom_view.GameView;
+import com.example.kkkkkn.my_2048.custom_view.ScoreView;
 
 public class GameActivity extends Activity {
     private Context mcontext;
     private final String TAG="2048小游戏";
     private GameView game_view;
     private TextView scoreTextView;
+    private TextView gameRuleTextView;
     private long runtime;
     private int width,height;
     private int auto;
     private Chronometer time;
     private long score=0;
+    private ScoreView scoreView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +35,9 @@ public class GameActivity extends Activity {
         game_view=findViewById(R.id.game_view);
         time=findViewById(R.id.timer);
         scoreTextView=findViewById(R.id.score);
-
+        scoreView=new ScoreView(this);
+        gameRuleTextView=findViewById(R.id.game_rule);
+        gameRuleTextView.setText(R.string.rule);
         //开始计时
         time.setBase(SystemClock.elapsedRealtime());//计时器清零
         //获取屏幕宽度、高度
@@ -54,8 +57,9 @@ public class GameActivity extends Activity {
                 score+=num;
                 String str=String.valueOf(score);
                 scoreTextView.setText(str);
-                //todo 调用显示动画
 
+                scoreView.setText("+"+ num);
+                scoreView.show(scoreTextView);
             }
 
             @Override
