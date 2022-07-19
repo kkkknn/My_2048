@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static android.view.MotionEvent.ACTION_DOWN;
 import static android.view.MotionEvent.ACTION_UP;
@@ -18,9 +17,9 @@ import static android.view.MotionEvent.ACTION_UP;
 public class GameView extends GridLayout {
     private static final String TAG = "GameView";
     private float start_x,start_y,end_x,end_y;
-    private boolean gameOver;
     private int columnCount;
     private Card[][] cards;
+    private Listener listener;
     private final ArrayList<Point> emptyList=new ArrayList<>();
 
     public GameView(Context context) {
@@ -53,28 +52,34 @@ public class GameView extends GridLayout {
                         end_y=event.getY();
                         float ax=end_x-start_x;
                         float ay=end_y-start_y;
+                        boolean isSlide =false;
                         if(Math.abs(ax)>Math.abs(ay)){
                             //左右手势
                             if(ax>0){
                                 //右手势
-                                slideRight();
+                                isSlide =slideRight();
                             }else if(ax<0){
                                 //左手势
-                                slideLeft();
+                                isSlide =slideLeft();
                             }
                         }else if(Math.abs(ax)<Math.abs(ay)){
                             //上下手势
                             if(ay>0){
-                                slideDown();
+                                isSlide =slideDown();
                             }else if(ay<0){
-                                slideUp();
+                                isSlide =slideUp();
                             }
                         }
-                        //判断游戏是否结束
-                        boolean flag=isGameOver();
-                        if (flag){
-                            Log.i(TAG, "onTouch: 游戏结束");
+                        //已滑动状态，进行添加数字
+                        if(isSlide){
+                            boolean flag=addRandomCardNum();
+                            if(!flag&&listener!=null){
+                                listener.gameOver(false);
+                            }
                         }
+
+                        break;
+                    default:
                         break;
                 }
                 return true;
@@ -82,72 +87,152 @@ public class GameView extends GridLayout {
         });
         addRandomCardNum();
     }
-
-    private boolean isGameOver() {
-        return gameOver;
+    
+    public void setListener(Listener listener){
+        this.listener=listener;
     }
 
-    private void slideLeft(){
+    private boolean slideLeft(){
         Log.i(TAG, "slideLeft: 左滑");
+        boolean isMerge=false;
         //思路， 从每行最右边开始遍历，取到值，然后遍历左边，直到找到数字或到头，
-        for (int i = 0; i < columnCount; i++) {
-            slide_process(Arrays.copyOf(cards[i],columnCount));
+        for (int i = 0; i <columnCount ; i++) {
+            int[] arrI =new int[columnCount];
+            int[] arrJ =new int[columnCount];
+            for (int j = 0; j <columnCount; j++) {
+                arrI[j]=i;
+                arrJ[j]=j;
+            }
+            boolean flag=slideProcess(arrI,arrJ,columnCount);
+            if(flag){
+                isMerge=true;
+            }
         }
         //修改完所有之后，调用展示动画
-
+        return isMerge;
     }
-    private void slideRight(){
+
+    private boolean slideRight(){
         Log.i(TAG, "slideRight: 右滑");
-        Card[] arr=new Card[columnCount];
+        boolean isSlide =false;
         for (int i = 0; i <columnCount ; i++) {
+            int[] arrI =new int[columnCount];
+            int[] arrJ =new int[columnCount];
+            int count=0;
             for (int j = columnCount-1; j >=0; j--) {
-                arr[i]=cards[i][j];
+                arrI[count]=i;
+                arrJ[count]=j;
+                count++;
             }
-            slide_process(arr);
+            boolean flag=slideProcess(arrI,arrJ,columnCount);
+            if(flag){
+                isSlide =true;
+            }
 
         }
-
+        return isSlide;
     }
-    private void slideUp(){
+
+    private boolean slideUp(){
         Log.i(TAG, "slideUp: 上划");
-        Card[] arr=new Card[columnCount];
+        boolean isSlide=false;
         for (int i = 0; i < columnCount; i++) {
+            int[] arrI =new int[columnCount];
+            int[] arrJ =new int[columnCount];
             for (int j = 0; j <columnCount; j++) {
-                arr[i]=cards[j][i];
+                arrI[j]=j;
+                arrJ[j]=i;
             }
-            slide_process(arr);
+            boolean flag=slideProcess(arrI,arrJ,columnCount);
+            if(flag){
+                isSlide=true;
+            }
         }
-
+        return isSlide;
     }
-    private void slideDown(){
+
+    private boolean slideDown(){
         Log.i(TAG, "slideDown: 下滑");
-        Card[] arr=new Card[columnCount];
+        boolean isSlide =false;
         for (int i = 0; i < columnCount; i++) {
+            int[] arrI =new int[columnCount];
+            int[] arrJ =new int[columnCount];
+            int count=0;
             for (int j = columnCount-1; j >=0; j--) {
-                arr[i]=cards[j][i];
+                arrI[count]=j;
+                arrJ[count]=i;
+                count++;
             }
-            slide_process(arr);
+            boolean flag=slideProcess(arrI,arrJ,columnCount);
+            if(flag){
+                isSlide =true;
+            }
         }
+        return isSlide;
     }
 
-    private void slide_process(Card[] arr){
-        int index=0;
-        int num=0;
-        for (Card card : arr) {
-            if (card.getShowNum() == 0) {
-            } else if (num == 0) {
-                num = card.getShowNum();
-                card.setShowNum(0);
-            } else if (num == card.getShowNum()) {
-                arr[index].setShowNum(card.getShowNum() * 2);
-                card.setShowNum(0);
-                index++;
-                num = 0;
+    private boolean slideProcess(int[] arrI, int[] arrJ, int len){
+        //2次遍历，第一次合并，第二次移动位置
+        boolean isSlide =false;
+        int lastNum=-1;
+        int lastIndex=-1;
+        for (int i = 0; i < len; i++) {
+            Card card=cards[arrI[i]][arrJ[i]];
+            int num=card.getShowNum();
+            if(num!=0){
+                if(lastNum!=num){
+                    if(lastIndex!=-1){
+                        cards[arrI[lastIndex]][arrJ[lastIndex]].setShowNum(lastNum);
+                    }
+                    lastNum=num;
+                    lastIndex=i;
+                    card.setShowNum(0);
+                }else {
+                    cards[arrI[lastIndex]][arrJ[lastIndex]].setShowNum(lastNum*2);
+                    if(listener!=null){
+                        listener.merge(lastNum*2);
+                        if ((lastNum*2)==2048){
+                            listener.gameOver(true);
+                        }
+                    }
+                    lastIndex=-1;
+                    lastNum=-1;
+                    card.setShowNum(0);
+                }
+            }
+            if (i==(len-1)&&lastNum!=-1){
+                cards[arrI[lastIndex]][arrJ[lastIndex]].setShowNum(lastNum);
             }
         }
-        if(num!=0){
-            arr[index].setShowNum(num);
+
+        //移动位置
+        for (int i = 0; i < len; i++) {
+            Card card=cards[arrI[i]][arrJ[i]];
+            int num=card.getShowNum();
+            if(num!=0){
+                //反向遍历，直到找到下一个非0，或最后一个0
+                for (int j = i-1; j >=0 ; j--) {
+                    Card reverseCard=cards[arrI[j]][arrJ[j]];
+                    int reverseNum=reverseCard.getShowNum();
+                    if(reverseNum!=0){
+                        //开始调换
+                        int index=j+1;
+                        if(index<i){
+                            cards[arrI[index]][arrJ[index]].setShowNum(num);
+                            card.setShowNum(0);
+                            isSlide =true;
+                        }
+                        break;
+                    }
+                    if(j==0){
+                        cards[arrI[j]][arrJ[j]].setShowNum(num);
+                        card.setShowNum(0);
+                        isSlide =true;
+                    }
+                }
+            }
         }
+        return isSlide;
     }
 
 
@@ -187,7 +272,7 @@ public class GameView extends GridLayout {
         }
     }
 
-    private void addRandomCardNum(){
+    private boolean addRandomCardNum(){
         getEmptyCard();
         if(!emptyList.isEmpty()){
             Point point=emptyList.get((int) (Math.random()*emptyList.size()));
@@ -195,7 +280,9 @@ public class GameView extends GridLayout {
 
             //todo 设置动画
             setAppearAnim(cards[point.x][point.y]);
+            return true;
         }
+        return false;
     }
 
     //设置动画
@@ -203,5 +290,9 @@ public class GameView extends GridLayout {
 
     }
 
+    public interface Listener{
+        void merge(int num);
+        void gameOver(boolean isFinish);
+    }
 
 }
