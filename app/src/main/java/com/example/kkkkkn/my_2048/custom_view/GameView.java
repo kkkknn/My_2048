@@ -47,6 +47,10 @@ public class GameView extends GridLayout {
 
     public void initView(int count, int size) {
         this.columnCount=count;
+
+        //清空所有对象，
+        removeAllViews();
+
         setColumnCount(columnCount);
         //初始化布局
         initCards(size,size);
@@ -285,6 +289,7 @@ public class GameView extends GridLayout {
         }
 
     }
+
 
     public interface Listener{
         void merge(int num);

@@ -147,6 +147,10 @@ public class ScoreView extends PopupWindow {
 
     }
 
+    public void reset(){
+        cacheScore=0;
+    }
+
     /**
      * 动画
      *

@@ -30,6 +30,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
+        android:id="@+id/info_layout"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -84,6 +85,18 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/new_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/info_layout"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/btn_background"
+        android:textColor="@drawable/btn_color"
+        android:textSize="14sp"
+        android:text="新游戏" />
 
     <com.example.kkkkkn.my_2048.custom_view.GameView
         android:id="@+id/game_view"
