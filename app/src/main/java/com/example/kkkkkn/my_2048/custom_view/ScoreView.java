@@ -4,9 +4,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -17,11 +14,9 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
-
 public class ScoreView extends PopupWindow {
-    private int mTextColor =  Color.BLACK;
-    private int mTextSize = 16;
+    private final int mTextColor =  Color.parseColor("#776E65");
+    private final int mTextSize = 16;
     private int mFromY = 0;
     private int mToY =  60;
     private float mFromAlpha = 1.0f;
@@ -30,7 +25,7 @@ public class ScoreView extends PopupWindow {
     private int mDistance = 60;
     private AnimationSet mAnimationSet;
     private boolean mChanged = false;
-    private Context mContext = null;
+    private final Context mContext;
     private TextView mScore = null;
     private int cacheScore=0;
 
@@ -81,7 +76,7 @@ public class ScoreView extends PopupWindow {
     /**
      * 设置移动距离
      *
-     * @param dis
+     * @param dis 移动距离
      */
     public void setDistance(int dis) {
         mDistance = dis;
@@ -93,8 +88,8 @@ public class ScoreView extends PopupWindow {
     /**
      * 设置Y轴移动属性
      *
-     * @param fromY
-     * @param toY
+     * @param fromY 开始位置
+     * @param toY   结束位置
      */
     public void setTranslateY(int fromY, int toY) {
         mFromY = fromY;
@@ -105,8 +100,8 @@ public class ScoreView extends PopupWindow {
     /**
      * 设置透明度属性
      *
-     * @param fromAlpha
-     * @param toAlpha
+     * @param fromAlpha 开始透明度
+     * @param toAlpha   结束透明度
      */
     public void setAlpha(float fromAlpha, float toAlpha) {
         mFromAlpha = fromAlpha;
@@ -117,7 +112,7 @@ public class ScoreView extends PopupWindow {
     /**
      * 设置动画时长
      *
-     * @param duration
+     * @param duration 毫秒时间
      */
     public void setDuration(int duration) {
         mDuration = duration;

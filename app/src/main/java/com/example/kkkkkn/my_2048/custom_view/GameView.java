@@ -25,8 +25,8 @@ public class GameView extends GridLayout {
     private Card[][] cards;
     private Listener listener;
     private final ArrayList<Point> emptyList=new ArrayList<>();
-    private Animation addAnimation ;
-    private Animation newAnimation ;
+    private final Animation addAnimation ;
+    private final Animation newAnimation ;
 
     public GameView(Context context) {
         super(context);
@@ -40,8 +40,12 @@ public class GameView extends GridLayout {
         newAnimation = AnimationUtils.loadAnimation(context, R.anim.card_scale_new);
     }
 
+    @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
 
-    public void initView(int count,int size) {
+    public void initView(int count, int size) {
         this.columnCount=count;
         setColumnCount(columnCount);
         //初始化布局
@@ -89,7 +93,7 @@ public class GameView extends GridLayout {
                         if(isSlide){
                             addRandomCardNum();
                         }
-
+                        performClick();
                         break;
                     default:
                         break;
@@ -194,7 +198,7 @@ public class GameView extends GridLayout {
         boolean isChange=false;
         int gameOver=0;
         int score=0;
-        ArrayList<Card> arrayList=new ArrayList();
+        ArrayList<Card> arrayList= new ArrayList<>();
         for (int i = 0; i < columnCount; i++) {
             Card card=cards[arrI[i]][arrJ[i]];
             for (int j = i+1; j < columnCount; j++) {
@@ -275,16 +279,11 @@ public class GameView extends GridLayout {
             Point point=emptyList.get((int) (Math.random()*emptyList.size()));
             cards[point.x][point.y].setShowNum(Math.random()>0.5?2:4);
 
-            setAppearAnim(cards[point.x][point.y]);
+            if(newAnimation!=null){
+                cards[point.x][point.y].startAnimation(newAnimation);
+            }
         }
 
-    }
-
-    //设置动画
-    private void setAppearAnim(Card card) {
-        if(newAnimation!=null){
-            card.startAnimation(newAnimation);
-        }
     }
 
     public interface Listener{
