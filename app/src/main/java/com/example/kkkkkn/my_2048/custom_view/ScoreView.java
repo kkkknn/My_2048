@@ -3,9 +3,9 @@ package com.example.kkkkkn.my_2048.custom_view;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -17,20 +17,22 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 public class ScoreView extends PopupWindow {
-    private String mText = "";
     private int mTextColor =  Color.BLACK;
     private int mTextSize = 16;
     private int mFromY = 0;
     private int mToY =  60;
     private float mFromAlpha = 1.0f;
     private float mToAlpha =  0.0f;
-    private int mDuration = 800;
+    private int mDuration = 400;
     private int mDistance = 60;
     private AnimationSet mAnimationSet;
     private boolean mChanged = false;
     private Context mContext = null;
-    private TextView mGood = null;
+    private TextView mScore = null;
+    private int cacheScore=0;
 
     public ScoreView(Context context) {
         super(context);
@@ -46,38 +48,26 @@ public class ScoreView extends PopupWindow {
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
         params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
-        mGood = new TextView(mContext);
-        mGood.setIncludeFontPadding(false);
-        mGood.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mTextSize);
-        mGood.setTextColor(mTextColor);
-        mGood.setText(mText);
-        mGood.setLayoutParams(params);
-        layout.addView(mGood);
+        mScore = new TextView(mContext);
+        mScore.setIncludeFontPadding(false);
+        mScore.setTextSize(TypedValue.COMPLEX_UNIT_DIP, mTextSize);
+        mScore.setTextColor(mTextColor);
+        mScore.setText("");
+        mScore.setLayoutParams(params);
+        layout.addView(mScore);
         setContentView(layout);
 
         int w = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         int h = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        mGood.measure(w, h);
-        setWidth(mGood.getMeasuredWidth());
-        setHeight(mDistance + mGood.getMeasuredHeight());
+        mScore.measure(w, h);
+        setWidth(mScore.getMeasuredWidth());
+        setHeight(mDistance + mScore.getMeasuredHeight());
         setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         setFocusable(false);
         setTouchable(false);
         setOutsideTouchable(false);
 
         mAnimationSet = createAnimation();
-    }
-
-    public void setText(String text) {
-        if (TextUtils.isEmpty(text)) {
-            throw new IllegalArgumentException("text cannot be null.");
-        }
-        mText = text;
-        mGood.setText(text);
-        mGood.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        int w = (int) mGood.getPaint().measureText(text);
-        setWidth(w);
-        setHeight(mDistance + getTextViewHeight(mGood, w));
     }
 
     private static int getTextViewHeight(TextView textView, int width) {
@@ -87,66 +77,6 @@ public class ScoreView extends PopupWindow {
         return textView.getMeasuredHeight();
     }
 
-    /**
-     * 设置文本颜色
-     *
-     * @param color
-     */
-    private void setTextColor(int color) {
-        mTextColor = color;
-        mGood.setTextColor(color);
-    }
-
-    /**
-     * 设置文本大小
-     *
-     * @param textSize
-     */
-    private void setTextSize(int textSize) {
-        mTextSize = textSize;
-        mGood.setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSize);
-    }
-
-    /**
-     * 设置文本信息
-     *
-     * @param text
-     * @param textColor
-     * @param textSize
-     */
-    public void setTextInfo(String text, int textColor, int textSize) {
-        setTextColor(textColor);
-        setTextSize(textSize);
-        setText(text);
-    }
-
-    /**
-     * 设置图片
-     *
-     * @param resId
-     */
-    public void setImage(int resId) {
-        setImage(mContext.getResources().getDrawable(resId));
-    }
-
-    /**
-     * 设置图片
-     *
-     * @param drawable
-     */
-    public void setImage(Drawable drawable) {
-        if (drawable == null) {
-            throw new IllegalArgumentException("drawable cannot be null.");
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            mGood.setBackground(drawable);
-        } else {
-            mGood.setBackgroundDrawable(drawable);
-        }
-        mGood.setText("");
-        setWidth(drawable.getIntrinsicWidth());
-        setHeight(mDistance + drawable.getIntrinsicHeight());
-    }
 
     /**
      * 设置移动距离
@@ -157,7 +87,7 @@ public class ScoreView extends PopupWindow {
         mDistance = dis;
         mToY = dis;
         mChanged = true;
-        setHeight(mDistance + mGood.getMeasuredHeight());
+        setHeight(mDistance + mScore.getMeasuredHeight());
     }
 
     /**
@@ -195,37 +125,31 @@ public class ScoreView extends PopupWindow {
     }
 
     /**
-     * 重置属性
-     */
-    public void reset() {
-        mText = "";
-        mTextColor = Color.BLACK;
-        mTextSize = 16;
-        mFromY = 0;
-        mToY = 60;
-        mFromAlpha = 1.0f;
-        mToAlpha = 0.0f;
-        mDuration = 800;
-        mDistance = 60;
-        mChanged = false;
-        mAnimationSet = createAnimation();
-    }
-
-    /**
      * 展示
      *
      * @param v
      */
-    public void show(View v) {
-        if (!isShowing()) {
+    public void show(int score,View v) {
+        if(!isShowing()){
+            String str="+"+String.valueOf(cacheScore+score);
+            cacheScore=0;
+            mScore.setText(str);
+            mScore.setBackground(new ColorDrawable(Color.TRANSPARENT));
+            int w = (int) mScore.getPaint().measureText(str);
+            setWidth(w);
+            setHeight(mDistance + getTextViewHeight(mScore, w));
+
             int offsetY = -v.getHeight() - getHeight();
             showAsDropDown(v, v.getWidth() / 2 - getWidth() / 2, offsetY);
             if (mAnimationSet == null || mChanged) {
                 mAnimationSet = createAnimation();
                 mChanged = false;
             }
-            mGood.startAnimation(mAnimationSet);
+            mScore.startAnimation(mAnimationSet);
+        }else {
+            cacheScore+=score;
         }
+
     }
 
     /**

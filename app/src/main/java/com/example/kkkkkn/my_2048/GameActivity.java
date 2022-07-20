@@ -54,12 +54,14 @@ public class GameActivity extends Activity {
         game_view.setListener(new GameView.Listener() {
             @Override
             public void merge(int num) {
+                if(num==0){
+                    return;
+                }
                 score+=num;
                 String str=String.valueOf(score);
                 scoreTextView.setText(str);
 
-                scoreView.setText("+"+ num);
-                scoreView.show(scoreTextView);
+                scoreView.show(num,scoreTextView);
             }
 
             @Override
@@ -76,7 +78,6 @@ public class GameActivity extends Activity {
         //设置时间
         if(runtime!=0){
             time.setBase(runtime);
-            Log.i(TAG, "onResume: "+runtime);
         }
         //开始计时
         time.start();
@@ -87,7 +88,6 @@ public class GameActivity extends Activity {
     protected void onPause() {
         //记录运行时间
         runtime=time.getBase();
-        Log.i(TAG, "onPause: "+runtime);
         //停止计时
         time.stop();
         super.onPause();
