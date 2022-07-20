@@ -4,7 +4,7 @@
 
 ## 目前界面
 
-<img src="img_sourse/ui.jpg" width="800"/>
+<img src="img_source/show.gif" width="600"/>
 
 ## 项目日志
 
@@ -21,4 +21,6 @@
 2019-4-17:  美化+小特效:
 
 2022-7-19: UI更新，BUG修复，代码重构
+
+2022-7-20: 动画添加，功能修复
 
