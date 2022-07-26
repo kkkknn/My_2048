@@ -219,10 +219,13 @@ public class GameView extends GridLayout {
                     card_next.setShowNum(0);
                     arrayList.add(card);
                     isChange=true;
+                    break;
                 }else if(card.getShowNum()==0){
                     card.setShowNum(card_next.getShowNum());
                     card_next.setShowNum(0);
                     isChange=true;
+                }else {
+                    break;
                 }
             }
         }
